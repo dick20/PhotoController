@@ -49,6 +49,21 @@ public class MyRecyclerViewAdapter<T> extends RecyclerView.Adapter<MyViewHolder>
         ((ImageView)holder.getView(R.id.head)).setImageBitmap(data.get(position).getIcon());
         ((TextView)holder.getView(R.id.name)).setText(data.get(position).getName());
         ((TextView)holder.getView(R.id.description)).setText(data.get(position).getDescription());
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.onClick(holder.getAdapterPosition());
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    onItemClickListener.onLongClick(holder.getAdapterPosition());
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -56,6 +71,10 @@ public class MyRecyclerViewAdapter<T> extends RecyclerView.Adapter<MyViewHolder>
         if(!data.isEmpty())
             return data.size();
         return 0;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener _onItemClickListener) {
+        this.onItemClickListener = _onItemClickListener;
     }
 
 }

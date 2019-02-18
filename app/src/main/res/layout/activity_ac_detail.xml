@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/controll_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="空调遥控器"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:textSize="25dp"
+        android:textColor="@color/colorPrimary"
+        />
+
+    <android.support.constraint.ConstraintLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/temperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="40dp"
+            android:textSize="100dp"
+            android:text="26"
+            android:textColor="#000000"
+            />
+
+        <TextView
+            android:id="@+id/oc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@id/number"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="60dp"
+            android:textSize="30dp"
+            android:text="°C"
+            android:textColor="#000000"
+            />
+
+        <TextView
+            android:id="@+id/mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@id/number"
+            app:layout_constraintTop_toBottomOf="@id/oc"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="5dp"
+            android:textSize="20dp"
+            android:text="制冷"
+            android:textColor="#000000"
+            />
+
+        <TextView
+            android:id="@+id/wind_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/number"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"
+            android:text="风速: 自动"
+            />
+        <TextView
+            android:id="@+id/wind_direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/number"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"
+            android:text="风向: 自动"
+            />
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        app:layout_constraintTop_toBottomOf="@id/temperature"
+        android:id="@+id/open_banner"
+        android:layout_width="match_parent"
+        android:layout_marginTop="40dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/open_but"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/open"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+
+        <TextView
+            android:id="@+id/mode_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="模式"
+            android:textSize="30dp"
+            />
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        app:layout_constraintTop_toBottomOf="@id/open_banner"
+        android:id="@+id/wind_banner"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/speed_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="风速"
+            android:textSize="30dp"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+        <TextView
+            android:id="@+id/direction_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="风向"
+            android:textSize="30dp"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+        <TextView
+            android:id="@+id/sao_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="扫风"
+            android:textSize="30dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        app:layout_constraintTop_toBottomOf="@id/wind_banner"
+        android:id="@+id/increase_banner"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/decrease_but"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/decrease"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="温度"
+            android:textSize="30dp"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+
+        <ImageView
+            android:id="@+id/increase_but"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/increase"
+            />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        app:layout_constraintTop_toBottomOf="@id/increase_banner"
+        android:id="@+id/time_banner"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/time_but"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="定时"
+            android:textSize="30dp"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+
+        <TextView
+            android:id="@+id/sleep_but"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="睡眠"
+            android:textSize="30dp"
+            />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:background="#777777"/>
+
+        <ImageView
+            android:id="@+id/more_but"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/more"
+            />
+    </LinearLayout>
+
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/wind_banner"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#777777"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/open_banner"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#777777"/>
+
+    <View
+        app:layout_constraintBottom_toTopOf="@id/open_banner"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#777777"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/increase_banner"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#777777"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/time_banner"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#777777"/>
+
+</android.support.constraint.ConstraintLayout>

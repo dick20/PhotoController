@@ -1,11 +1,13 @@
 package dick.android.remotecontrol;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -46,6 +48,32 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         adapter = new MyRecyclerViewAdapter(MainActivity.this,R.layout.controller_item,list);
         recyclerView.setAdapter(adapter);
+        // 设置监听器
+        adapter.setOnItemClickListener(new MyRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putString("repoName",list.get(position).getType());
+
+                Log.i("tag","click~");
+                // 对于空调遥控器
+                if(list.get(position).getType().equals("ac")){
+                    intent.setClass(MainActivity.this,AcDetailActivity.class);
+                }
+                // 对于电视遥控器
+                else if(list.get(position).getType().equals("tv")){
+                    intent.setClass(MainActivity.this,TvDetailActivity.class);
+                }
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(int position) {
+
+            }
+        });
     }
 
     private void setButton(){
