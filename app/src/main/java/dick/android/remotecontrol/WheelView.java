@@ -19,6 +19,8 @@ import static java.lang.Math.sqrt;
 public class WheelView extends View {
     WheelClickListener listener;
     int pressFlag ;
+    int temp_left = 270; // 调整左边距
+    int temp_up = 300; // 调整上边距
     public static final int CLICK_NONE = -1;
     public static final int CLICK_RIGHT_DOWN = 0, CLICK_BOTTOM_DOWN = 1, CLICK_LEFT_DOWN = 2, CLICK_TOP_DOWN = 3;
     public static final int CLICK_RIGHT_UP = 4, CLICK_BOTTOM_UP = 5, CLICK_LEFT_UP = 6, CLICK_TOP_UP = 7;
@@ -36,7 +38,7 @@ public class WheelView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int w = canvas.getWidth();
+        int w = (int)(canvas.getWidth() * 0.5);
         r1 = w / 2 - 2;
         r2 = r1 / 3;
         float density = getResources().getDisplayMetrics().density;
@@ -44,35 +46,35 @@ public class WheelView extends View {
         p.setColor(upClr);
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(w / 2, w / 2, r1, p);
+        canvas.drawCircle(w / 2+temp_left, w / 2+temp_up, r1, p);
         if (pressFlag >= CLICK_RIGHT_DOWN && pressFlag <= CLICK_TOP_DOWN) {
             p.setColor(innerClr);
-            canvas.drawArc(new RectF(0, 0, w, w), pressFlag * 90 - 45, 90, true, p);
+            canvas.drawArc(new RectF(temp_left, temp_up, temp_left+w, temp_up+w), pressFlag * 90 - 45, 90, true, p);
         }
         p.setColor(borderClr);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(density * 2f);
-        canvas.drawCircle(w / 2, w / 2, r1, p);
+        canvas.drawCircle(w / 2+temp_left, w / 2+temp_up, r1, p);
         float factor = (float) sqrt(2);
         p.setColor(borderClr);
-        canvas.drawLine(r1 - r1 / factor, r1 - r1 / factor, r1 + r1 / factor, r1 + r1 / factor, p);
-        canvas.drawLine(r1 - r1 / factor, r1 + r1 / factor, r1 + r1 / factor, r1 - r1 / factor, p);
+        canvas.drawLine(r1 - r1 / factor+temp_left, r1 - r1 / factor+temp_up, r1 + r1 / factor+temp_left, r1 + r1 / factor+temp_up, p);
+        canvas.drawLine(r1 - r1 / factor+temp_left, r1 + r1 / factor+temp_up, r1 + r1 / factor+temp_left, r1 - r1 / factor+temp_up, p);
         p.setColor(arrowClr);
         p.setStrokeJoin(Paint.Join.MITER);
-        canvas.drawLine(w / 8 + 12 * density, w / 2 - 12 * density, w / 8, w / 2, p);
-        canvas.drawLine(w / 8, w / 2, w / 8 + 12 * density, w / 2 + 12 * density, p);
-        canvas.drawLine(w * 7 / 8 - 12 * density, w / 2 - 12 * density, w * 7 / 8, w / 2, p);
-        canvas.drawLine(w * 7 / 8 - 12 * density, w / 2 + 12 * density, w * 7 / 8, w / 2, p);
-        canvas.drawLine(w / 2 - 12 * density, w / 8 + 12 * density, w / 2, w / 8, p);
-        canvas.drawLine(w / 2 + 12 * density, w / 8 + 12 * density, w / 2, w / 8, p);
-        canvas.drawLine(w / 2 - 12 * density, w * 7 / 8 - 12 * density, w / 2, w * 7 / 8, p);
-        canvas.drawLine(w / 2 + 12 * density, w * 7 / 8 - 12 * density, w / 2, w * 7 / 8, p);
+        canvas.drawLine(w / 8 + 12 * density+temp_left, w / 2 - 12 * density+temp_up, w / 8+temp_left, w / 2+temp_up, p);
+        canvas.drawLine(w / 8+temp_left, w / 2+temp_up, w / 8 + 12 * density+temp_left, w / 2 + 12 * density+temp_up, p);
+        canvas.drawLine(w * 7 / 8 - 12 * density+temp_left, w / 2 - 12 * density+temp_up, w * 7 / 8+temp_left, w / 2+temp_up, p);
+        canvas.drawLine(w * 7 / 8 - 12 * density+temp_left, w / 2 + 12 * density+temp_up, w * 7 / 8+temp_left, w / 2+temp_up, p);
+        canvas.drawLine(w / 2 - 12 * density+temp_left, w / 8 + 12 * density+temp_up, w / 2+temp_left, w / 8+temp_up, p);
+        canvas.drawLine(w / 2 + 12 * density+temp_left, w / 8 + 12 * density+temp_up, w / 2+temp_left, w / 8+temp_up, p);
+        canvas.drawLine(w / 2 - 12 * density+temp_left, w * 7 / 8 - 12 * density+temp_up, w / 2+temp_left, w * 7 / 8+temp_up, p);
+        canvas.drawLine(w / 2 + 12 * density+temp_left, w * 7 / 8 - 12 * density+temp_up, w / 2+temp_left, w * 7 / 8+temp_up, p);
         p.setColor(innerClr);
         p.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(w / 2, w / 2, r2, p);
+        canvas.drawCircle(w / 2+temp_left, w / 2+temp_up, r2, p);
         p.setColor(borderClr);
         p.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle(w / 2, w / 2, r2, p);
+        canvas.drawCircle(w / 2+temp_left, w / 2+temp_up, r2, p);
     }
 
     public interface WheelClickListener {
@@ -81,8 +83,8 @@ public class WheelView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
+        float x = event.getX() - temp_left;
+        float y = event.getY() - temp_up;
         if (sqrt(r1 * r1) > hypot(r1 - x, r1 - y) && sqrt(r2 * r2) < hypot(r1 - x, r1 - y)) {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 float translatedX = x - r1;
