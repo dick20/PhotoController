@@ -8,12 +8,23 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ListHolder;
+import com.orhanobut.dialogplus.OnItemClickListener;
+import com.orhanobut.dialogplus.ViewHolder;
+
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -80,7 +91,35 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this,"添加遥控器",Toast.LENGTH_SHORT).show();
+                ArrayList<ElectricalAppliance> data = new ArrayList<>();
+                data.add(new ElectricalAppliance(((BitmapDrawable) getResources().getDrawable(R.drawable.tv)).getBitmap(),"电视"));
+                data.add(new ElectricalAppliance(((BitmapDrawable) getResources().getDrawable(R.drawable.ac)).getBitmap(),"空调"));
+                data.add(new ElectricalAppliance(((BitmapDrawable) getResources().getDrawable(R.drawable.heater)).getBitmap(),"电热水器"));
+                data.add(new ElectricalAppliance(((BitmapDrawable) getResources().getDrawable(R.drawable.projector)).getBitmap(),"投影仪"));
+
+                ElectricalApplianceAdapter electricalApplianceAdapter = new ElectricalApplianceAdapter(MainActivity.this,data);
+
+                DialogPlus dialog = DialogPlus.newDialog(MainActivity.this)
+                        .setContentHolder(new ListHolder())
+                        .setHeader(R.layout.header) // Optional
+                        .setFooter(R.layout.footer) // Optional
+                        .setCancelable(true) // Optional default:true
+                        .setGravity(Gravity.CENTER) // Optional default:true
+                        .setAdapter(electricalApplianceAdapter) // This must be called, Any adapter can be set.
+                        .setOnItemClickListener(new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                                Toast.makeText(MainActivity.this,"点击"+position,Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent();
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("repoName",position);
+                                intent.setClass(MainActivity.this,AddControllerActivity.class);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            }
+                        })
+                        .create();
+                dialog.show();
             }
         });
     }
