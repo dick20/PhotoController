@@ -21,11 +21,10 @@ import java.util.List;
 
 public class WifiCollector extends AppCompatActivity {
     WifiManager wifi;
-    List list;
     TextView show;
-    String csum;
     Button button;
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +32,7 @@ public class WifiCollector extends AppCompatActivity {
         show = (TextView) findViewById(R.id.wifi_ssid);
         button = findViewById(R.id.fresh);
 
+        // 判断wifi是否开启
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if(! wifi.isWifiEnabled()){
             if(wifi.getWifiState() != WifiManager.WIFI_STATE_ENABLING)
@@ -46,7 +46,7 @@ public class WifiCollector extends AppCompatActivity {
                 //判断是否需要向用户解释为什么需要申请该权限
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    //showToast("自Android 6.0开始需要打开位置权限才可以搜索到Ble设备");
+                    //showToast("自Android 6.0开始需要打开位置权限");
                 }
                 //请求权限
                 ActivityCompat.requestPermissions(this,
@@ -73,10 +73,10 @@ public class WifiCollector extends AppCompatActivity {
                  */
                 List<ScanResult> results = wifi.getScanResults();
                 for(ScanResult result:results){
-                    wifiinformation += result.BSSID+","+result.SSID+","+result.level+"\n";
+                    wifiinformation += "bssid为：" + result.BSSID+ "   ssid为："+result.SSID+"   强度为："+result.level+"\n";
                 }
 
-                String text = "We are connecting to " + ssid + " at " + String.valueOf(speed) + "   " + String.valueOf(units) + ". Strength : " + strength;
+                String text = "正连接的WiFi\nssid为：" + ssid + "\nbssid为：" +bssid + "\n连接速度为：" + String.valueOf(speed) + "  " + String.valueOf(units) + "\n强度为：" + strength;
                 wifiinformation += "\n\n";
                 wifiinformation += text;
 
