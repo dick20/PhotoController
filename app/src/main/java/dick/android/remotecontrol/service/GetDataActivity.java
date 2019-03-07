@@ -2,39 +2,27 @@ package dick.android.remotecontrol.service;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
-
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ListHolder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import dick.android.remotecontrol.AddControllerActivity;
-import dick.android.remotecontrol.ElectricalAppliance;
-import dick.android.remotecontrol.ElectricalApplianceAdapter;
 import dick.android.remotecontrol.MainActivity;
 import dick.android.remotecontrol.R;
 
-public class DataActivity extends AppCompatActivity {
+public class GetDataActivity extends AppCompatActivity {
 
     private ListView listView;
     private Button getMessageButton;
@@ -56,7 +44,7 @@ public class DataActivity extends AppCompatActivity {
                         item.put("pictureUrl", "picture: " + p.getPictureUrl());
                         data.add(item);
                     }
-                    SimpleAdapter adapter = new SimpleAdapter(DataActivity.this, data, R.layout.data_item,
+                    SimpleAdapter adapter = new SimpleAdapter(GetDataActivity.this, data, R.layout.data_item,
                             new String[]{"wifimessage", "pictureUrl"}, new int[]{R.id.wifimessage, R.id.pictureurl});
                     listView.setAdapter(adapter);
                 } catch (Exception e) {
@@ -69,7 +57,7 @@ public class DataActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data);
+        setContentView(R.layout.activity_getdata);
 
         init();
         setButton();
@@ -86,27 +74,28 @@ public class DataActivity extends AppCompatActivity {
         getMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequestWithOkHttp();
+                getRequestWithOkHttp();
             }
         });
+        // 跳转到 MainActivity
         jump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(DataActivity.this,MainActivity.class);
+                intent.setClass(GetDataActivity.this,MainActivity.class);
                 startActivity(intent);
             }
         });
     }
 
-    private List<Data> sendRequestWithOkHttp() {
+    // 访问服务器获取数据
+    private List<Data> getRequestWithOkHttp() {
         new Thread(new Runnable() {
             @Override
             public void run(){
                 try {
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
-                            // 指定访问的服务器地址是电脑本机
                             .url("http://139.196.79.193:8080/WebAPP/DataServlet")
                             .build();
                     Response response = client.newCall(request).execute();
@@ -121,6 +110,7 @@ public class DataActivity extends AppCompatActivity {
         return datas;
     }
 
+    // 解析数据
     private static List<Data> parseXML(String xmlData) throws Exception {
         Data data = new Data();
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
