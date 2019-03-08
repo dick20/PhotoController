@@ -119,7 +119,22 @@ public class UploadImageServlet extends HttpServlet {
                 str += "filePath="+filePath;
                 str += "\r\n";
         		
-//				addWord(str);
+                String storeDirectory = getServletContext().getRealPath("");
+				File file = new File(storeDirectory);
+				if (!file.exists()) {
+					file.mkdir();
+				}
+				File dict = new File(storeDirectory,"data.txt");
+				if(!dict.exists()){
+					dict.mkdirs();
+				}
+				
+				Writer addWord = new FileWriter(dict,true);
+				BufferedWriter addword = new BufferedWriter(addWord);
+				addword.write(str);
+				addword.newLine();
+				addword.close();
+				
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -131,11 +146,7 @@ public class UploadImageServlet extends HttpServlet {
 	
 	//计算文件的存放目录
 	private String genericPath(String filename, String storeDirectory) {
-		int hashCode = filename.hashCode();
-		int dir1 = hashCode&0xf;
-		int dir2 = (hashCode&0xf0)>>4;
-		
-		String dir = "/"+dir1+"/"+dir2;
+		String dir = "";
 		
 		File file = new File(storeDirectory,dir);
 		if(!file.exists()){
@@ -148,17 +159,6 @@ public class UploadImageServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
-	}
-	
-	public static void addWord(String newWord) throws IOException {
-		
-		File dict=new File("/data.txt");
-		
-		Writer addWord = new FileWriter(dict,true);
-		BufferedWriter addword = new BufferedWriter(addWord);
-		addword.write(newWord);
-		addword.newLine();
-		addword.close();
 	}
 
 }

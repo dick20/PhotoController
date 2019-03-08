@@ -34,8 +34,8 @@ public class AddControllerActivity extends AppCompatActivity {
     private Button ok;
     private String wifiMessage;
 
-//    public static final String BASE_URL = "http://139.196.79.193:8080/WebAPP";
-    public static final String BASE_URL =  "http://172.26.86.202:8080/WebAPP";
+    public static final String BASE_URL = "http://139.196.79.193:8080/WebAPP";
+//    public static final String BASE_URL =  "http://172.19.45.126:8080/WebAPP";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +151,7 @@ public class AddControllerActivity extends AppCompatActivity {
 
         Log.d("send ", "请求地址 " + BASE_URL + "/uploadimage");
         Log.d("send ", "传递消息 " + wifiMessage);
+
         try{
             Response response = mOkHttpClient.newCall(request).execute();
             Log.d("send ", "响应码 " + response.code());
