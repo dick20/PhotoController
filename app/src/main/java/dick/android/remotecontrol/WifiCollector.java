@@ -12,12 +12,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+
+import static dick.android.remotecontrol.service.DBUtils.getWifiMessage;
 
 public class WifiCollector extends AppCompatActivity {
     WifiManager wifi;
@@ -73,7 +75,10 @@ public class WifiCollector extends AppCompatActivity {
                  */
                 List<ScanResult> results = wifi.getScanResults();
                 for(ScanResult result:results){
-                    wifiinformation += "bssid为：" + result.BSSID+ "   ssid为："+result.SSID+"   强度为："+result.level+"\n";
+                    if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
+                            result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
+                        wifiinformation += "bssid为：" + result.BSSID + "   ssid为：" + result.SSID + "   强度为：" + result.level + "\n";
+                    }
                 }
 
                 String text = "正连接的WiFi\nssid为：" + ssid + "\nbssid为：" +bssid + "\n连接速度为：" + String.valueOf(speed) + "  " + String.valueOf(units) + "\n强度为：" + strength;
@@ -81,6 +86,16 @@ public class WifiCollector extends AppCompatActivity {
                 wifiinformation += text;
 
                 show.setText(wifiinformation);
+            }
+        });
+
+        Button get = findViewById(R.id.get);
+        get.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> mes = new HashMap<>();
+                getWifiMessage();
+
             }
         });
     }

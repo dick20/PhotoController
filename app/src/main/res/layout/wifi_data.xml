@@ -21,4 +21,14 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginBottom="10dp"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/get"
+        android:text="get"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="10dp"
+        />
 </android.support.constraint.ConstraintLayout>
