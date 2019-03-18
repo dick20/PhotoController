@@ -35,11 +35,11 @@ public class WifiCollector extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_data);
-        show = (TextView) findViewById(R.id.wifi_ssid);
+        show = findViewById(R.id.wifi_ssid);
         button = findViewById(R.id.fresh);
         get = findViewById(R.id.get);
         set = findViewById(R.id.set);
-        positionMark = findViewById(R.id.position);
+        positionMark = findViewById(R.id.positionMark);
 
         // 判断wifi是否开启
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -71,6 +71,7 @@ public class WifiCollector extends AppCompatActivity {
                 /**
                  * 获取当前连接上的wifi相关信息
                  */
+                wifimanger.startScan();
                 WifiInfo info = wifi.getConnectionInfo();
                 int strength = info.getRssi();
                 int speed = info.getLinkSpeed();
@@ -120,9 +121,12 @@ public class WifiCollector extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
+                            wifimanger = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                             String wifiMessage = getWifiMessage();
                             DBUtils.insertWifiData(new WifiData(address, wifiMessage));
-
+                            positionMark.setText("ok");
+                            System.out.println(address);
+                            System.out.println(wifiMessage);
                         }
                     }).start();
                 }
@@ -146,16 +150,16 @@ public class WifiCollector extends AppCompatActivity {
     }
 
     public static String getWifiMessage() {
-        WifiInfo info = wifimanger.getConnectionInfo();
         String wifiinformation = "";
         /**
          * 获取扫描到的所有wifi相关信息
          */
+        wifimanger.startScan();
         List<ScanResult> results = wifimanger.getScanResults();
         for(ScanResult result:results){
             if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
                     result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
-                wifiinformation += "bssid：" + result.BSSID + " level：" + result.level + ";";
+                wifiinformation += result.BSSID + " " + result.level + ";";
             }
         }
 
