@@ -14,17 +14,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.HashMap;
 import java.util.List;
-
-import static dick.android.remotecontrol.service.DBUtils.getWifiMessage;
+import dick.android.remotecontrol.service.DBUtils;
 
 public class WifiCollector extends AppCompatActivity {
     WifiManager wifi;
+    public static WifiManager wifimanger;
     TextView show;
     Button button;
+    Button get;
+    Button set;
+    EditText positionMark;
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;
 
     @Override
@@ -33,6 +37,9 @@ public class WifiCollector extends AppCompatActivity {
         setContentView(R.layout.wifi_data);
         show = (TextView) findViewById(R.id.wifi_ssid);
         button = findViewById(R.id.fresh);
+        get = findViewById(R.id.get);
+        set = findViewById(R.id.set);
+        positionMark = findViewById(R.id.position);
 
         // 判断wifi是否开启
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -40,6 +47,7 @@ public class WifiCollector extends AppCompatActivity {
             if(wifi.getWifiState() != WifiManager.WIFI_STATE_ENABLING)
                 wifi.setWifiEnabled(true);
         }
+        wifimanger = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//如果 API level 是大于等于 23(Android 6.0) 时
             //判断是否具有权限
@@ -89,13 +97,35 @@ public class WifiCollector extends AppCompatActivity {
             }
         });
 
-        Button get = findViewById(R.id.get);
+
         get.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> mes = new HashMap<>();
-                getWifiMessage();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DBUtils.getWifiData();
+                    }
+                }).start();
+            }
+        });
 
+        set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String address = positionMark.getText().toString();
+                if(address == null || address.equals("")) {
+                    Toast.makeText(WifiCollector.this,"输入地址不能为空",Toast.LENGTH_SHORT).show();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String wifiMessage = getWifiMessage();
+                            DBUtils.insertWifiData(new WifiData(address, wifiMessage));
+
+                        }
+                    }).start();
+                }
             }
         });
     }
@@ -113,5 +143,22 @@ public class WifiCollector extends AppCompatActivity {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    public static String getWifiMessage() {
+        WifiInfo info = wifimanger.getConnectionInfo();
+        String wifiinformation = "";
+        /**
+         * 获取扫描到的所有wifi相关信息
+         */
+        List<ScanResult> results = wifimanger.getScanResults();
+        for(ScanResult result:results){
+            if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
+                    result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
+                wifiinformation += "bssid：" + result.BSSID + " level：" + result.level + ";";
+            }
+        }
+
+        return wifiinformation;
     }
 }

@@ -35,7 +35,6 @@ public class AddControllerActivity extends AppCompatActivity {
     private String wifiMessage;
 
     public static final String BASE_URL = "http://139.196.79.193:8080/WebAPP";
-//    public static final String BASE_URL =  "http://172.19.45.126:8080/WebAPP";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +71,7 @@ public class AddControllerActivity extends AppCompatActivity {
                 } else {
                     String filePath = uri.getEncodedPath();
                     final String imagePath = Uri.decode(filePath);
-
+                    wifiMessage = WifiCollector.getWifiMessage();
                     Toast.makeText(AddControllerActivity.this, "图片位置:" + imagePath, Toast.LENGTH_LONG).show();
 
                     uploadImage(imagePath);

@@ -11,6 +11,15 @@
         android:textSize="12dp"
         />
 
+    <EditText
+        android:id="@+id/positionMark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/wifi_ssid"
+        android:layout_marginTop="20dp"
+        android:hint="输入位置标记"
+        />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,8 +27,18 @@
         android:text="fresh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginBottom="10dp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/set"
+        android:text="set"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/fresh"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="60dp"
         />
 
     <Button

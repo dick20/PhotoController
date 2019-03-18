@@ -4,10 +4,14 @@ import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
+
+import dick.android.remotecontrol.WifiData;
 
 public class DBUtils {
     private static final String TAG = "DBUtils";
@@ -16,24 +20,11 @@ public class DBUtils {
     private static String user = "local";//数据库账号
     private static String password = "123456";//数据库密码
 
-    private static Connection getConnection(String dbName) {
+    private static Connection getConnection() {
         Connection con = null;
         try {
-//            driver = "com.mysql.jdbc.Driver";
-//            //172.26.86.202    139.196.79.193
-//            url = "jdbc:mysql://139.196.79.193:3306/wififingerprint";
-//            user = "local";
-//            password = "123456";
-
             Class.forName(driver);//加载数据库驱动，注册到驱动管理
             con=DriverManager.getConnection(url,user,password);
-            if (con != null) {
-                System.out.println("connect successfully");
-                System.out.println("connect successfully");
-            } else {
-                System.out.println("fail");
-                System.out.println("fail");
-            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
@@ -41,36 +32,51 @@ public class DBUtils {
         }
         return con;
     }
-    public static HashMap<String, String> getWifiMessage() {
-        //HashMap<String, String> map = new HashMap<>();
-        Connection conn = getConnection("wififingerprint");
+    public static List<WifiData> getWifiData() {
+        List<WifiData> list = new ArrayList<>();
+        Connection con = getConnection();
         try {
-            Statement st = conn.createStatement();
-            String sql = "select wifimessage from message";
+            Statement st = con.createStatement();
+            String sql = "select * from message";
             ResultSet res = st.executeQuery(sql);
             if (res == null) {
                 return null;
             } else {
-                //int cnt = res.getMetaData().getColumnCount();
-                //res.last(); int rowCnt = res.getRow(); res.first();
-                //res.next();
                 while(res.next()) {
-                    String wifimessage = res.getString("wifimessage");
-                    Log.i("DB",wifimessage);
+                    WifiData wifiData = new WifiData();
+                    wifiData.setAddress(res.getString("address"));
+                    wifiData.setWifiMessage(res.getString("wifimessage"));
+                    list.add(wifiData);
+                    Log.i("DB",wifiData.getAddress() + "  " + wifiData.getWifiMessage());
                 }
-//                for (int i = 1; i <= cnt; ++i) {
-//                    String field = res.getMetaData().getColumnName(i);
-//                    map.put(field, res.getString(field));
-//                }
-                conn.close();
+
+                con.close();
                 st.close();
                 res.close();
                 return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, " 数据操作异常");
+            Log.d(TAG, " 数据获取异常");
             return null;
+        }
+    }
+
+    public static void insertWifiData(WifiData wifiData) {
+        Connection con = getConnection();
+        PreparedStatement ps = null;
+        try{
+            String sql = "INSERT INTO message (address,wifimessage) VALUES (?,?)";
+            String address = wifiData.getAddress();
+            String wifimessage = wifiData.getWifiMessage();
+            ps = (PreparedStatement) con.prepareStatement(sql);
+            ps.setString(1, address);
+            ps.setString(2, wifimessage);
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, " 数据插入异常");
         }
     }
 }
