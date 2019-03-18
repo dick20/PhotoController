@@ -19,6 +19,14 @@
         android:layout_marginTop="20dp"
         android:hint="输入位置标记"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/clear_but"
+        android:text="clear"
+        app:layout_constraintTop_toBottomOf="@+id/positionMark"
+        android:layout_marginTop="30dp"
+        />
 
     <Button
         android:layout_width="wrap_content"

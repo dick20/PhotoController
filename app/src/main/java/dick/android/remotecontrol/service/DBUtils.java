@@ -49,7 +49,6 @@ public class DBUtils {
                     list.add(wifiData);
                     Log.i("DB",wifiData.getAddress() + "  " + wifiData.getWifiMessage());
                 }
-
                 con.close();
                 st.close();
                 res.close();
@@ -59,6 +58,21 @@ public class DBUtils {
             e.printStackTrace();
             Log.d(TAG, " 数据获取异常");
             return null;
+        }
+    }
+
+    public static void clearWifiData() {
+        Connection con = getConnection();
+        try {
+            Statement st = con.createStatement();
+            String sql = "delete from message";
+            st.executeUpdate(sql);
+            Log.d(TAG, " 数据库删除成功");
+            con.close();
+            st.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, " 数据库删除异常");
         }
     }
 
