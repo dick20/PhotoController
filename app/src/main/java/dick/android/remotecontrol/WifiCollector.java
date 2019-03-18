@@ -55,7 +55,7 @@ public class WifiCollector extends AppCompatActivity {
             }
             // clear
             else if(msg.what==103){
-                Toast.makeText(WifiCollector.this, "成功清除所有wifi信息", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WifiCollector.this, "未打开清除功能，防止操作失误", Toast.LENGTH_SHORT).show();
                 positionMark.setText("");
             }
         }
@@ -144,7 +144,7 @@ public class WifiCollector extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        DBUtils.clearWifiData();
+                        // DBUtils.clearWifiData();
                         Message message = Message.obtain(handler);
                         message.what = 103;
                         handler.sendMessage(message);
