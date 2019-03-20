@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -18,9 +19,15 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 
+import wifilocation.DBUtils;
+import wifilocation.PredictLocation;
+import wifilocation.WifiData;
+
 @WebServlet("/uploadimage")
 public class UploadImageServlet extends HttpServlet {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -74,9 +81,9 @@ public class UploadImageServlet extends HttpServlet {
 				throws ServletException, IOException {
 			String message = "";
 			String fieldName = "", fieldValue = "", filePath = "";
+			String res = "";
             
 			try{
-	            
 				DiskFileItemFactory dff = new DiskFileItemFactory();
 				ServletFileUpload sfu = new ServletFileUpload(dff);
 				List<FileItem> items = sfu.parseRequest(request);
@@ -113,12 +120,23 @@ public class UploadImageServlet extends HttpServlet {
 						}
 					}
 				}
+//				ArrayList<WifiData> list = null;
+//				new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                    	
+//                    	
+//                    }
+//                }).start();
+				
 				
 	            String str = "name="+fieldName + ", value="+ fieldValue;
 	            str += "\r\n";
                 str += "filePath="+filePath;
                 str += "\r\n";
-        		
+//                str += res;
+//                str += "\r\n";
+
                 String storeDirectory = getServletContext().getRealPath("");
 				File file = new File(storeDirectory);
 				if (!file.exists()) {
@@ -133,14 +151,28 @@ public class UploadImageServlet extends HttpServlet {
 				BufferedWriter addword = new BufferedWriter(addWord);
 				addword.write(str);
 				addword.newLine();
-				addword.close();
 				
+				ArrayList<WifiData> list = DBUtils.getWifiData();
+				if (list == null) {
+					res = "open mysql failed";
+					addword.write(res);
+					addword.newLine();
+				} else {
+					if (fieldValue.isEmpty()) {
+						fieldValue = "bssid:0a:74:9c:6e:32:8e level:-73;bssid:0a:74:9c:6e:3f:1e level:-65;bssid:0a:74:9c:6e:4b:2b level:-89;bssid:0a:74:9c:6e:4d:86 level:-56;bssid:0a:74:9c:6e:4d:87 level:-50;bssid:0a:74:9c:6e:4e:c3 level:-76;bssid:0a:74:9c:6e:9e:ff level:-91;bssid:0a:74:9c:6e:ab:0f level:-90;bssid:0e:74:9c:6e:32:8e level:-72;bssid:0e:74:9c:6e:3f:1e level:-65;bssid:0e:74:9c:6e:3f:1f level:-84;bssid:0e:74:9c:6e:4b:2b level:-89;bssid:0e:74:9c:6e:4d:86 level:-56;bssid:0e:74:9c:6e:4e:c3 level:-76;bssid:0e:74:9c:6e:9e:ff level:-90;bssid:0e:74:9c:6e:ab:0f level:-91;";
+					}
+					res = PredictLocation.predictLocation(fieldValue);
+					addword.write(res);
+					addword.newLine();
+				}			
+				
+				addword.close();
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 				message = "ÉÏ´«Í¼Æ¬Ê§°Ü";
 			} finally {
-				response.getWriter().write(message);
+				response.getWriter().write(res);
 			}
 		}
 	

@@ -1,9 +1,12 @@
 package dick.android.remotecontrol;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,6 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -71,7 +77,7 @@ public class AddControllerActivity extends AppCompatActivity {
                 } else {
                     String filePath = uri.getEncodedPath();
                     final String imagePath = Uri.decode(filePath);
-                    wifiMessage = WifiCollector.getWifiMessage();
+                    wifiMessage = getWifiMessage();
                     Toast.makeText(AddControllerActivity.this, "图片位置:" + imagePath, Toast.LENGTH_LONG).show();
 
                     uploadImage(imagePath);
@@ -127,9 +133,10 @@ public class AddControllerActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Log.i("Server ", "服务器响应" + result);
-            if(!"error".equals(result)) {
-                Log.i("Send ", "图片地址 " + BASE_URL + result);
-            }
+            Toast.makeText(AddControllerActivity.this, "预测您在: " + result, Toast.LENGTH_LONG).show();
+//            if(!"error".equals(result)) {
+//                Log.i("Send ", "图片地址 " + BASE_URL + result);
+//            }
         }
     }
 
@@ -189,4 +196,28 @@ public class AddControllerActivity extends AppCompatActivity {
         return f;
     }
 
+    private String getWifiMessage() {
+        WifiManager wifimanger = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        //WifiInfo info = wifimanger.getConnectionInfo();
+        StringBuilder wifiinformation = new StringBuilder();
+        List<String> wifiinfo = new ArrayList<>();
+        /**
+         * 获取扫描到的所有wifi相关信息
+         * 按照mac地址排序
+         */
+        wifimanger.startScan();
+        List<ScanResult> results = wifimanger.getScanResults();
+        for(ScanResult result:results){
+            if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
+                    result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
+                String wifitemp = "bssid:" + result.BSSID + " level:" + result.level + ";";
+                wifiinfo.add(wifitemp);
+            }
+        }
+        Collections.sort(wifiinfo);
+        for (String str:wifiinfo){
+            wifiinformation.append(str);
+        }
+        return wifiinformation.toString();
+    }
 }
