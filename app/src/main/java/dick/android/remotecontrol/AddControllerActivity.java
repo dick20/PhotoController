@@ -78,7 +78,7 @@ public class AddControllerActivity extends AppCompatActivity {
                     String filePath = uri.getEncodedPath();
                     final String imagePath = Uri.decode(filePath);
                     wifiMessage = getWifiMessage();
-                    Toast.makeText(AddControllerActivity.this, "图片位置:" + imagePath, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(AddControllerActivity.this, "图片位置:" + imagePath, Toast.LENGTH_LONG).show();
 
                     uploadImage(imagePath);
                 }

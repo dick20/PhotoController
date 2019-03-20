@@ -159,9 +159,10 @@ public class UploadImageServlet extends HttpServlet {
 					addword.newLine();
 				} else {
 					if (fieldValue.isEmpty()) {
-						fieldValue = "bssid:0a:74:9c:6e:32:8e level:-73;bssid:0a:74:9c:6e:3f:1e level:-65;bssid:0a:74:9c:6e:4b:2b level:-89;bssid:0a:74:9c:6e:4d:86 level:-56;bssid:0a:74:9c:6e:4d:87 level:-50;bssid:0a:74:9c:6e:4e:c3 level:-76;bssid:0a:74:9c:6e:9e:ff level:-91;bssid:0a:74:9c:6e:ab:0f level:-90;bssid:0e:74:9c:6e:32:8e level:-72;bssid:0e:74:9c:6e:3f:1e level:-65;bssid:0e:74:9c:6e:3f:1f level:-84;bssid:0e:74:9c:6e:4b:2b level:-89;bssid:0e:74:9c:6e:4d:86 level:-56;bssid:0e:74:9c:6e:4e:c3 level:-76;bssid:0e:74:9c:6e:9e:ff level:-90;bssid:0e:74:9c:6e:ab:0f level:-91;";
+						res = "not found wifi message";
+					} else {
+						res = PredictLocation.predictLocation(fieldValue);
 					}
-					res = PredictLocation.predictLocation(fieldValue);
 					addword.write(res);
 					addword.newLine();
 				}			
