@@ -2,6 +2,7 @@ package wifilocation;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -47,6 +48,34 @@ public class DBUtils {
                 res.close();
                 return list;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("数据获取异常");
+            return null;
+        }
+    }
+    
+    public static AdderssMap getAddressMap(String address) {
+    	Connection con = DBUtils.getConnection();
+    	PreparedStatement ps=null;
+        ResultSet rs=null;
+        try {
+            String sql = "select * from addressmap where address=?";
+            ps=con.prepareStatement(sql);
+            ps.setString(1, address);
+            rs=ps.executeQuery();
+            
+            if(rs.next()){
+            	AdderssMap adderssMap = new AdderssMap();
+                adderssMap.setAddress(address);
+                adderssMap.setX(rs.getFloat("addressMapX"));
+                adderssMap.setY(rs.getFloat("addressMapY"));            
+                
+                return adderssMap;
+            }else{
+                return null;
+            }           
+            
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("数据获取异常");

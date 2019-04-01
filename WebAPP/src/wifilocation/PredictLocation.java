@@ -3,16 +3,14 @@ package wifilocation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class PredictLocation {
 	public static String predictLocation(String message) {
+		Map<Integer, String> different = new TreeMap<Integer, String>();
 		ArrayList<WifiData> list = DBUtils.getWifiData();
 		String res = "";
-		int difference = Integer.MAX_VALUE;
 		String[] wifimessage = message.split(";");
-//		for(String str : wifimessage) {
-//			System.out.println(str);
-//		}
 		
 		for (int i = 0; i < list.size(); i++) {
 			int diff = 0;
@@ -21,8 +19,7 @@ public class PredictLocation {
 			for (String str : mes) {
 				String bssid = str.substring(6, 24);
 				String level = str.substring(30, 33);
-				wifi.put(bssid, Integer.parseInt(level));
-//				System.out.println(bssid + "  " + level);			
+				wifi.put(bssid, Integer.parseInt(level));		
 			}
 			
 			for(String str : wifimessage) {
@@ -37,17 +34,48 @@ public class PredictLocation {
 					diff += 20*20;
 				}
 			}
-			
-			System.out.println(list.get(i).getAddress() + "     " + diff);
-			if (difference > diff) {
-				difference = diff;
-				res = list.get(i).getAddress();
-			}
+			different.put(diff, list.get(i).getAddress());
+			//System.out.println(list.get(i).getAddress() + "     " + diff);
 		}
-		if (res.isEmpty()) {
+		
+		for (Integer key:different.keySet()) {
+			System.out.println(different.get(key) + "  " + key); 
+		}
+		
+		if (different.isEmpty()) {
 			return "not found";
+		} else {
+			int i = 0;
+			int f1 = 0, f2 = 0, f3 = 0;
+			AdderssMap adderssMap1 = null, adderssMap2 = null, adderssMap3 = null;
+			double resx = 0, resy = 0;
+			
+			for (Integer key:different.keySet()) {
+				i ++;
+				if (i == 1) {
+					f1 = key;
+					adderssMap1 = new AdderssMap(DBUtils.getAddressMap(different.get(key)));
+				} else if (i == 2) {
+					f2 = key;
+					adderssMap2 = new AdderssMap(DBUtils.getAddressMap(different.get(key)));
+				} else if (i == 3) {
+					f3 = key;
+					adderssMap3 = new AdderssMap(DBUtils.getAddressMap(different.get(key)));
+				} else {
+					break;
+				}
+				res += different.get(key) + " " ;
+			}
+			
+			double weight = 0;
+			weight = 1.0 / (1.0/f1 + 1.0/f2 + 1.0/f3);
+			resx = weight / f1 * adderssMap1.getX() + weight / f2 * adderssMap2.getX() + weight / f3 * adderssMap3.getX();
+			resy = weight / f1 * adderssMap1.getY() + weight / f2 * adderssMap2.getY() + weight / f3 * adderssMap3.getY();
+
+			res += String.format("%.2f", resx) + " " + String.format("%.2f", resy);
+			System.out.println(resx + "  " +resy);
+			return res;
 		}
-		return res;
 	}
 	
 	public static void main(String args[]) {
