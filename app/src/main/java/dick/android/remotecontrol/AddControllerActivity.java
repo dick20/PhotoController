@@ -78,8 +78,6 @@ public class AddControllerActivity extends AppCompatActivity {
                     String filePath = uri.getEncodedPath();
                     final String imagePath = Uri.decode(filePath);
                     wifiMessage = getWifiMessage();
-                    //Toast.makeText(AddControllerActivity.this, "图片位置:" + imagePath, Toast.LENGTH_LONG).show();
-
                     uploadImage(imagePath);
                 }
             }
@@ -134,9 +132,6 @@ public class AddControllerActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             Log.i("Server ", "服务器响应" + result);
             Toast.makeText(AddControllerActivity.this, "预测您在: " + result, Toast.LENGTH_LONG).show();
-//            if(!"error".equals(result)) {
-//                Log.i("Send ", "图片地址 " + BASE_URL + result);
-//            }
         }
     }
 
@@ -197,27 +192,26 @@ public class AddControllerActivity extends AppCompatActivity {
     }
 
     private String getWifiMessage() {
-        WifiManager wifimanger = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        //WifiInfo info = wifimanger.getConnectionInfo();
-        StringBuilder wifiinformation = new StringBuilder();
-        List<String> wifiinfo = new ArrayList<>();
+        WifiManager wifiManger = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        StringBuilder wifiInformation = new StringBuilder();
+        List<String> wifiInfo = new ArrayList<>();
         /**
          * 获取扫描到的所有wifi相关信息
          * 按照mac地址排序
          */
-        wifimanger.startScan();
-        List<ScanResult> results = wifimanger.getScanResults();
+        wifiManger.startScan();
+        List<ScanResult> results = wifiManger.getScanResults();
         for(ScanResult result:results){
             if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
                     result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
                 String wifitemp = "bssid:" + result.BSSID + " level:" + result.level + ";";
-                wifiinfo.add(wifitemp);
+                wifiInfo.add(wifitemp);
             }
         }
-        Collections.sort(wifiinfo);
-        for (String str:wifiinfo){
-            wifiinformation.append(str);
+        Collections.sort(wifiInfo);
+        for (String str:wifiInfo){
+            wifiInformation.append(str);
         }
-        return wifiinformation.toString();
+        return wifiInformation.toString();
     }
 }
