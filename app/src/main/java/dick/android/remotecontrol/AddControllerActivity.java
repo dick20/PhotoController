@@ -41,6 +41,7 @@ public class AddControllerActivity extends AppCompatActivity {
     private String wifiMessage;
 
     public static final String BASE_URL = "http://139.196.79.193:8080/WebAPP";
+    //  172.26.86.202   172.19.66.109
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

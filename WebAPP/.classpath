@@ -15,5 +15,7 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.44-bin.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-5.1.44-bin.jar"/>
+	<classpathentry kind="lib" path="libs/jython-standalone-2.5.4-rc1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jython-standalone-2.5.4-rc1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
