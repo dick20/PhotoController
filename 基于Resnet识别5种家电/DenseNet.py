@@ -124,32 +124,37 @@ def densenet():
     return DenseNet(Bottleneck, [2, 5, 4, 6])
 
 
-# Test
 
-model_object = densenet()
-model_object.load_state_dict(torch.load('./model/classifier.pth',map_location='cpu'))
-model_object.eval()
 
-transform_test = transforms.Compose([
-        transforms.Resize(32),
-        transforms.ToTensor(),
-        # Normalize a tensor image with mean and standard variance
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
+def classify(image_path):
+	# Test
+	model_object = densenet()
+	model_object.load_state_dict(torch.load('./model/classifier.pth',map_location='cpu'))
+	model_object.eval()
 
-# image path
-myset = torchvision.datasets.ImageFolder(root='./household/test', transform=transform_test)
+	transform_test = transforms.Compose([
+	        transforms.Resize(32),
+	        transforms.ToTensor(),
+	        # Normalize a tensor image with mean and standard variance
+	        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+	    ])
 
-myloader = torch.utils.data.DataLoader(myset, batch_size=1, shuffle=False)
+	# image path
+	myset = torchvision.datasets.ImageFolder(root= image_path, transform=transform_test)
 
-dic = {0:'air-conditioning', 1:'fan', 2:'loudspeaker-box', 3:'projector', 4:'television'}
-    
-with torch.no_grad():
-        for batch_idx, (inputs, targets) in enumerate(myloader):
-            device = 'cpu'
-            inputs, targets = inputs, targets
-            model_object
-            outputs = model_object(inputs)
-            
-            _, predicted = outputs.max(1) # make prediction according to the outputs
-            print(dic[predicted.numpy()[0]])
+	myloader = torch.utils.data.DataLoader(myset, batch_size=1, shuffle=False)
+
+	dic = {0:'air-conditioning', 1:'fan', 2:'loudspeaker-box', 3:'projector', 4:'television'}
+	    
+	with torch.no_grad():
+	        for batch_idx, (inputs, targets) in enumerate(myloader):
+	            device = 'cpu'
+	            inputs, targets = inputs, targets
+	            model_object
+	            outputs = model_object(inputs)
+	            
+	            _, predicted = outputs.max(1) # make prediction according to the outputs
+	            print(dic[predicted.numpy()[0]])
+
+
+path = './household/test'
