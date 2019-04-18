@@ -132,7 +132,7 @@ def classify(image_path):
     # print(0)
     model_object = densenet()
     # print(11)
-    model_object.load_state_dict(torch.load('./src/classify/model/classifier.pth',map_location='cpu'))
+    model_object.load_state_dict(torch.load('./WEB-INF/classes/classify/model/classifier.pth',map_location='cpu'))
     # print(12)
     model_object.eval()
     transform_test = transforms.Compose([

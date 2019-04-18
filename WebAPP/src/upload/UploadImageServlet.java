@@ -33,7 +33,7 @@ public class UploadImageServlet extends HttpServlet {
 			throws ServletException, IOException {
 //		接收图片
 //		uploadImage(request, response);
-//		接收图片与用户Id
+//		接收图片与信息
 		changeUserImage(request, response);
 	}
 
@@ -101,7 +101,8 @@ public class UploadImageServlet extends HttpServlet {
 							filename = IdGenertor.generateGUID() + "." + FilenameUtils.getExtension(filename);
 						}
 						// 生成存储路径
-						String storeDirectory = getServletContext().getRealPath("/files/images");
+						//String storeDirectory = getServletContext().getRealPath("/files/images");
+						String storeDirectory = "C:/files/images";
 						File file = new File(storeDirectory);
 						if (!file.exists()) {
 							file.mkdir();
@@ -109,7 +110,7 @@ public class UploadImageServlet extends HttpServlet {
 						String path = genericPath(filename, storeDirectory);
 						// 处理文件的上传
 						try {
-							item.write(new File(storeDirectory + path, filename));
+							item.write(new File(storeDirectory + path, filename+"jpg"));
 							
 							filePath = getServletContext().getRealPath("") + "files\\images" + path + "\\" + filename;
 							System.out.println("filePath="+filePath);
@@ -158,7 +159,7 @@ public class UploadImageServlet extends HttpServlet {
 					}
 					String path = getServletContext().getRealPath("") + "files";
 					System.out.println(path);
-					String classify = PredictLocation.classification(storeDirectory, path);
+					String classify = PredictLocation.classification(storeDirectory, "./files");
 					System.out.println(classify);
 					res += classify;
 					res += "\r\n";
