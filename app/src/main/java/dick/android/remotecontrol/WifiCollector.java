@@ -117,13 +117,12 @@ public class WifiCollector extends AppCompatActivity {
                  */
                 List<ScanResult> results = wifi.getScanResults();
                 /**
-                 *这里添加了先验知识，仅保留中大的wifi信息
+                 *这里添加了先验知识，仅保留强度在-80以下的
                  * 这里为了方便比较，新增排序功能
                  */
                 List<String> wifiinfo = new ArrayList<>();
                 for(ScanResult result:results){
-                    if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
-                            result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
+                    if(result.level > -80 ) {
                         String wifitemp = "bssid：" + result.BSSID + "   ssid：" + result.SSID + " level：" + result.level + "\n";
                         wifiinfo.add(wifitemp);
                     }
@@ -229,8 +228,7 @@ public class WifiCollector extends AppCompatActivity {
         wifimanger.startScan();
         List<ScanResult> results = wifimanger.getScanResults();
         for(ScanResult result:results){
-            if(result.BSSID.substring(0, 12).equals("0e:74:9c:6e:") ||
-                    result.BSSID.substring(0, 12).equals("0a:74:9c:6e:")) {
+            if(result.level > -80) {
                 String wifitemp = "bssid:" + result.BSSID + " level:" + result.level + ";";
                 wifiinfo.add(wifitemp);
             }
