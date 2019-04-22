@@ -1,5 +1,8 @@
 package wifilocation;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +41,6 @@ public class PredictLocation {
 			//System.out.println(list.get(i).getAddress() + "     " + diff);
 		}
 		
-		for (Integer key:different.keySet()) {
-			System.out.println(different.get(key) + "  " + key); 
-		}
-		
 		if (different.isEmpty()) {
 			return "not found";
 		} else {
@@ -78,10 +77,42 @@ public class PredictLocation {
 		}
 	}
 	
+	public static String classification(String filepath, String path) throws IOException{
+//		System.out.println(System.getProperty("user.dir"));
+//		
+//		String loadpath = filepath + "WEB-INF\\lib\\Dll1.dll";
+//		System.load(loadpath);
+//
+//		TestNative testNative = new TestNative();
+//		String cmd = "python ./WEB-INF/classes/classify/DenseNet.py " + path;
+//        String res = testNative.classify(cmd); 
+//        System.out.println("classify");
+        
+        String command = "C:/classify.exe";
+        Runtime runtime = Runtime.getRuntime(); 
+        Process process = runtime.exec(command); 
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8")); 
+        String line = null; 
+        StringBuilder build = new StringBuilder(); 
+        while ((line = br.readLine()) != null) { 
+            System.out.println(line); 
+            build.append(line); 
+        } 
+        
+        if(build.toString().length() == 0)
+        	return "air-conditioning";
+		return build.toString();
+	}
+	
 	public static void main(String args[]) {
 		try {
-			String message = "bssid:0a:74:9c:6e:32:8e level:-73;bssid:0a:74:9c:6e:3f:1e level:-65;bssid:0a:74:9c:6e:4b:2b level:-89;bssid:0a:74:9c:6e:4d:86 level:-56;bssid:0a:74:9c:6e:4d:87 level:-50;bssid:0a:74:9c:6e:4e:c3 level:-76;bssid:0a:74:9c:6e:9e:ff level:-91;bssid:0a:74:9c:6e:ab:0f level:-90;bssid:0e:74:9c:6e:32:8e level:-72;bssid:0e:74:9c:6e:3f:1e level:-65;bssid:0e:74:9c:6e:3f:1f level:-84;bssid:0e:74:9c:6e:4b:2b level:-89;bssid:0e:74:9c:6e:4d:86 level:-56;bssid:0e:74:9c:6e:4e:c3 level:-76;bssid:0e:74:9c:6e:9e:ff level:-90;bssid:0e:74:9c:6e:ab:0f level:-91;";			
-			System.out.println(PredictLocation.predictLocation(message));
+//			String message = "bssid:0a:74:9c:6e:32:8e level:-73;bssid:0a:74:9c:6e:3f:1e level:-65;bssid:0a:74:9c:6e:4b:2b level:-89;bssid:0a:74:9c:6e:4d:86 level:-56;bssid:0a:74:9c:6e:4d:87 level:-50;bssid:0a:74:9c:6e:4e:c3 level:-76;bssid:0a:74:9c:6e:9e:ff level:-91;bssid:0a:74:9c:6e:ab:0f level:-90;bssid:0e:74:9c:6e:32:8e level:-72;bssid:0e:74:9c:6e:3f:1e level:-65;bssid:0e:74:9c:6e:3f:1f level:-84;bssid:0e:74:9c:6e:4b:2b level:-89;bssid:0e:74:9c:6e:4d:86 level:-56;bssid:0e:74:9c:6e:4e:c3 level:-76;bssid:0e:74:9c:6e:9e:ff level:-90;bssid:0e:74:9c:6e:ab:0f level:-91;";			
+//			System.out.println(PredictLocation.predictLocation(message));
+//			System.out.println();
+			
+			String str = PredictLocation.classification("E:\\AndroidStudioProjects\\PhotoController\\WebAPP\\WebContent\\", "./src/household");
+			System.out.println(str);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

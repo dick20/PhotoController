@@ -33,7 +33,7 @@ public class UploadImageServlet extends HttpServlet {
 			throws ServletException, IOException {
 //		接收图片
 //		uploadImage(request, response);
-//		接收图片与用户Id
+//		接收图片与信息
 		changeUserImage(request, response);
 	}
 
@@ -77,7 +77,7 @@ public class UploadImageServlet extends HttpServlet {
 	}
 	
 	// 修改用户的图片
-		private void changeUserImage(HttpServletRequest request, HttpServletResponse response) 
+	private void changeUserImage(HttpServletRequest request, HttpServletResponse response) 
 				throws ServletException, IOException {
 			String message = "";
 			String fieldName = "", fieldValue = "", filePath = "";
@@ -101,7 +101,8 @@ public class UploadImageServlet extends HttpServlet {
 							filename = IdGenertor.generateGUID() + "." + FilenameUtils.getExtension(filename);
 						}
 						// 生成存储路径
-						String storeDirectory = getServletContext().getRealPath("/files/images");
+						//String storeDirectory = getServletContext().getRealPath("/files/images");
+						String storeDirectory = "C:/files/images";
 						File file = new File(storeDirectory);
 						if (!file.exists()) {
 							file.mkdir();
@@ -109,9 +110,9 @@ public class UploadImageServlet extends HttpServlet {
 						String path = genericPath(filename, storeDirectory);
 						// 处理文件的上传
 						try {
-							item.write(new File(storeDirectory + path, filename));
+							item.write(new File(storeDirectory + path, filename+"jpg"));
 							
-							filePath = "/files/images" + path + "/" + filename;
+							filePath = getServletContext().getRealPath("") + "files\\images" + path + "\\" + filename;
 							System.out.println("filePath="+filePath);
 							message = filePath;
 							
@@ -120,22 +121,12 @@ public class UploadImageServlet extends HttpServlet {
 						}
 					}
 				}
-//				ArrayList<WifiData> list = null;
-//				new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                    	
-//                    	
-//                    }
-//                }).start();
 				
 				
 	            String str = "name="+fieldName + ", value="+ fieldValue;
 	            str += "\r\n";
-                str += "filePath="+filePath;
+                str += "filePath=" + filePath;
                 str += "\r\n";
-//                str += res;
-//                str += "\r\n";
 
                 String storeDirectory = getServletContext().getRealPath("");
 				File file = new File(storeDirectory);
@@ -144,7 +135,8 @@ public class UploadImageServlet extends HttpServlet {
 				}
 				File dict = new File(storeDirectory,"data.txt");
 				if(!dict.exists()){
-					dict.mkdirs();
+					//dict.mkdirs();
+					dict.createNewFile();
 				}
 				
 				Writer addWord = new FileWriter(dict,true);
@@ -160,15 +152,25 @@ public class UploadImageServlet extends HttpServlet {
 				} else {
 					if (fieldValue.isEmpty()) {
 						res = "not found wifi message";
+						res += "\r\n";
 					} else {
 						res = PredictLocation.predictLocation(fieldValue);
+						res += "\r\n";
 					}
+					String path = getServletContext().getRealPath("") + "files";
+					System.out.println(path);
+					String classify = PredictLocation.classification(storeDirectory, "./files");
+					System.out.println(classify);
+					res += classify;
+					res += "\r\n";
+					
 					addword.write(res);
 					addword.newLine();
 				}			
 				
 				addword.close();
-				
+//				File files = new File(filePath);
+//				files.delete();
 			} catch (Exception e) {
 				e.printStackTrace();
 				message = "上传图片失败";
