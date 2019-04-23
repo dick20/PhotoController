@@ -10,21 +10,30 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import dick.android.remotecontrol.service.DBUtils;
 
@@ -39,6 +48,14 @@ public class WifiCollector extends AppCompatActivity {
     Button jump;
     EditText positionMark;
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2;
+
+
+    private static final String TAG = "WifiCollectorActivity";
+    private static final String STORAGE_DIR = "My-Data";
+    private static final String SENSOR_FILENAME = "sensor.txt";
+
+    private File framesDir;
 
     @SuppressLint("HandlerLeak")
     final Handler handler = new Handler(){
@@ -47,16 +64,16 @@ public class WifiCollector extends AppCompatActivity {
             // set
             if(msg.what==101) {
                 Toast.makeText(WifiCollector.this, "成功上传wifi信息", Toast.LENGTH_SHORT).show();
-                positionMark.setText("");
+//                positionMark.setText("");
             }
             // get
             else if(msg.what==102){
                 Toast.makeText(WifiCollector.this, "成功获取wifi信息", Toast.LENGTH_SHORT).show();
-                positionMark.setText("");
+//                positionMark.setText("");
             }
             // clear
             else if(msg.what==103){
-                Toast.makeText(WifiCollector.this, "未打开清除功能，防止操作失误", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(WifiCollector.this, "未打开清除功能，防止操作失误", Toast.LENGTH_SHORT).show();
                 positionMark.setText("");
             }
         }
@@ -96,6 +113,7 @@ public class WifiCollector extends AppCompatActivity {
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         REQUEST_CODE_ACCESS_COARSE_LOCATION);
             }
+            checkPermission();
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -158,9 +176,12 @@ public class WifiCollector extends AppCompatActivity {
         jump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(WifiCollector.this,MainActivity.class);
-                startActivity(intent);
+                if(createStorageDir()){
+                    Toast.makeText(WifiCollector.this,"创建成功",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(WifiCollector.this,"创建失败",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -170,7 +191,7 @@ public class WifiCollector extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        DBUtils.getWifiData();
+//                        DBUtils.getWifiData();
                         Message message = Message.obtain(handler);
                         message.what = 102;
                         handler.sendMessage(message);
@@ -191,7 +212,11 @@ public class WifiCollector extends AppCompatActivity {
                         public void run() {
                             wifimanger = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                             String wifiMessage = getWifiMessage();
-                            DBUtils.insertWifiData(new WifiData(address, wifiMessage));
+                            // 网络上传
+//                            DBUtils.insertWifiData(new WifiData(address, wifiMessage));
+                            // 改为保存文件
+                            String mark = positionMark.getText().toString();
+                            saveSensorDataToFile(mark, wifiMessage);
                             Message message = Message.obtain(handler);
                             message.what = 101;
                             handler.sendMessage(message);
@@ -212,11 +237,45 @@ public class WifiCollector extends AppCompatActivity {
                 //permission denied, boo! Disable the functionality that depends on this permission.
                 //这里进行权限被拒绝的处理
             }
-        } else {
+        }
+        else if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE){
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                // permission was granted, yay! Do the
+                // contacts-related task you need to do.
+                Toast.makeText(WifiCollector.this, "run writeDatasToExternalStorage() method", Toast.LENGTH_SHORT).show();
+                //   writeDatasToExternalStorage();
+
+            } else {
+                // Permission Denied
+                Toast.makeText(WifiCollector.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                // permission denied, boo! Disable the
+                // functionality that depends on this permission.
+            }
+        }
+        else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+    private void checkPermission() {
+        //检查权限（NEED_PERMISSION）是否被授权 PackageManager.PERMISSION_GRANTED表示同意授权
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //用户已经拒绝过一次，再次弹出权限申请对话框需要给用户一个解释
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission
+                    .WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "请开通相关权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show();
+            }
+            //申请权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
 
+        } else {
+            Toast.makeText(this, "授权成功！", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "checkPermission: 已经授权！");
+        }
+    }
     public static String getWifiMessage() {
         //WifiInfo info = wifimanger.getConnectionInfo();
         StringBuilder wifiinformation = new StringBuilder();
@@ -229,7 +288,7 @@ public class WifiCollector extends AppCompatActivity {
         List<ScanResult> results = wifimanger.getScanResults();
         for(ScanResult result:results){
             if(result.level > -80) {
-                String wifitemp = "bssid:" + result.BSSID + " level:" + result.level + ";";
+                String wifitemp = "bssid:" + result.BSSID + "   ssid：" + result.SSID + " level:" + result.level + "\n";
                 wifiinfo.add(wifitemp);
             }
         }
@@ -239,4 +298,33 @@ public class WifiCollector extends AppCompatActivity {
         }
         return wifiinformation.toString();
     }
+
+    private boolean createStorageDir() {
+        framesDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                STORAGE_DIR + File.separator + getEditText());
+        if (!framesDir.exists() && !framesDir.mkdirs()) {
+            Toast.makeText(WifiCollector.this, "Failed to create storage directory",Toast.LENGTH_SHORT).show();
+            Log.i(TAG,STORAGE_DIR + File.separator + getEditText());
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public String getEditText() {
+        return positionMark.getText().toString();
+    }
+
+    private void saveSensorDataToFile(String mark, String wifiMessage) {
+        String filename = framesDir.getParent()  + File.separator + mark + File.separator + SENSOR_FILENAME;
+        File sensorFile = new File(filename);
+        try {
+            FileWriter fos = new FileWriter(sensorFile,Boolean.TRUE);
+            fos.write(wifiMessage + "\n\n");
+            fos.close();
+        } catch (Exception e) {
+            Log.e(TAG, "", e);
+        }
+    }
+
 }
